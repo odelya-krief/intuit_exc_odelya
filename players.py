@@ -4,8 +4,6 @@ import logging
 
 from pydantic import BaseModel
 
-PLAYERS_FILE_NAME = "player.csv"
-
 
 class Player(BaseModel):
     playerID: str
@@ -34,13 +32,24 @@ class Player(BaseModel):
     bbrefID: str
 
 
-class PlayerManager:
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class PlayerManager(metaclass=Singleton):
     players: List[Player]
 
-    def __init__(self):
+    def __init__(self, file_path: str):
+        print("init")
         try:
-            with open("player.csv", "r") as players_file:
-                self.players = [Player(**raw_player) for raw_player in csv.DictReader(players_file)]
+            with open(file_path, "r") as players_file:
+                csv_reader = csv.DictReader(players_file)
+                self.players = [Player(**raw_player) for raw_player in csv_reader]
         except FileNotFoundError as error:
             logging.error("Players file not found,couldn't load players", error)
             raise error
@@ -55,3 +64,7 @@ class PlayerManager:
             logging.debug(f"Player with id:[{player_id}] was not found.", error)
             return None
         return requested_player
+
+
+def get_player_manager(file_path: str) -> PlayerManager:
+    return PlayerManager(file_path=file_path)

@@ -3,10 +3,14 @@ from typing import List, Optional
 import uvicorn
 from fastapi import FastAPI
 
-from players import Player, PlayerManager
+import settings
+from players import Player, get_player_manager
 
 app = FastAPI()
-player_manager = PlayerManager()
+
+
+def player_manager():
+    return get_player_manager(file_path=settings.PLAYERS_FILE_PATH)
 
 
 @app.get("/")
@@ -16,13 +20,10 @@ async def root():
 
 @app.get("/api/players")
 async def players() -> List[Player]:
-    return player_manager.get_players()
+    return player_manager().get_players()
 
 
 @app.get("/api/players/{player_id}")
 async def players(player_id: str) -> Optional[Player]:
-    return player_manager.get_player(player_id=player_id)
+    return player_manager().get_player(player_id=player_id)
 
-
-# if __name__ == '__main__':
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
