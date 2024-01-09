@@ -1,6 +1,6 @@
 import pytest
 
-from players import Singleton
+from players_manager.players import Singleton
 
 
 @pytest.fixture(autouse=True)

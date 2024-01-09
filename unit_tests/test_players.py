@@ -1,6 +1,6 @@
 import unittest
 
-from players import PlayerManager, Player, get_player_manager
+from players_manager.players import get_player_manager, Player
 
 player_1 = Player(
     playerID="aardsda01",
