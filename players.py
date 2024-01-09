@@ -50,8 +50,7 @@ class PlayerManager(metaclass=Singleton):
                 csv_reader = csv.DictReader(players_file)
                 self.players = [Player(**raw_player) for raw_player in csv_reader]
         except FileNotFoundError as error:
-            logging.error("Players file not found, could not load players", error)
-            raise error
+            raise Exception("Players file not found, could not load players") from error
 
     def get_players(self) -> List[Player]:
         return self.players

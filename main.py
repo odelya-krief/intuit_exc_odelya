@@ -36,4 +36,5 @@ async def players(player_id: str) -> Optional[Player]:
        will be a lot better, in terms of security, future updates and changes, scale, speed, tests
        and deployment. 
     5. Add a better configuration management.
+    6. Add github actions on the repo, for testing and deploying.
 """

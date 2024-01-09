@@ -1,6 +1,6 @@
 import unittest
 
-from players import PlayerManager, Player
+from players import PlayerManager, Player, get_player_manager
 
 player_1 = Player(
     playerID="aardsda01",
@@ -62,27 +62,28 @@ TEST_PLAYERS_DAMAGED_FILE_PATH = "test_players_damaged.csv"
 
 
 class TestPlayersManager(unittest.TestCase):
-    valid_player_manager = PlayerManager(TEST_PLAYERS_VALID_FILE_PATH)
-    empty_player_manager = PlayerManager(TEST_PLAYERS_EMPTY_FILE_PATH)
-
     def test_get_players_returns_all_players(self):
-        self.assertEqual(self.valid_player_manager.get_players(), [player_1, player_2])
+        expected_players = get_player_manager(TEST_PLAYERS_VALID_FILE_PATH).get_players()
+        self.assertEqual(expected_players, [player_1, player_2])
 
     def test_get_players_returns_empty_list_for_empty_csv_file(self):
-        self.assertEqual(self.empty_player_manager.get_players(), [])
+        expected_players = get_player_manager(TEST_PLAYERS_EMPTY_FILE_PATH).get_players()
+        self.assertEqual(expected_players, [])
 
     def test_get_player_by_id_returns_matching_player(self):
-        self.assertEqual(self.valid_player_manager.get_player(player_1.playerID), player_1)
+        expected_player = get_player_manager(TEST_PLAYERS_VALID_FILE_PATH).get_player(player_1.playerID)
+        self.assertEqual(expected_player, player_1)
 
     def test_get_player_by_id_returns_None_when_id_was_not_found(self):
-        self.assertIsNone(self.valid_player_manager.get_player("xxx"))
+        expected_none = get_player_manager(TEST_PLAYERS_VALID_FILE_PATH).get_player("xxx")
+        self.assertIsNone(expected_none)
 
     def test_raise_error_when_file_was_not_found(self):
-        self.assertRaises(FileNotFoundError, lambda: PlayerManager(file_path="xxx"))
+        self.assertRaises(Exception, lambda: get_player_manager("xxx"))
 
     def test_raise_error_for_damaged_file(self):
         """
         Expecting TypeError because PlayerManager tries to convert the csv lines to type Player
         but fails.
         """
-        self.assertRaises(TypeError, lambda: PlayerManager(file_path=TEST_PLAYERS_DAMAGED_FILE_PATH))
+        self.assertRaises(TypeError, lambda: get_player_manager(TEST_PLAYERS_DAMAGED_FILE_PATH))
