@@ -45,13 +45,12 @@ class PlayerManager(metaclass=Singleton):
     players: List[Player]
 
     def __init__(self, file_path: str):
-        print("init")
         try:
             with open(file_path, "r") as players_file:
                 csv_reader = csv.DictReader(players_file)
                 self.players = [Player(**raw_player) for raw_player in csv_reader]
         except FileNotFoundError as error:
-            logging.error("Players file not found,couldn't load players", error)
+            logging.error("Players file not found, could not load players", error)
             raise error
 
     def get_players(self) -> List[Player]:
@@ -66,5 +65,6 @@ class PlayerManager(metaclass=Singleton):
         return requested_player
 
 
+# In order to avoid reloading of the csv file, the player manager instance is created once.
 def get_player_manager(file_path: str) -> PlayerManager:
     return PlayerManager(file_path=file_path)
